@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MLBB Winrate Tracker</title>
+    <title>MLBB Ascend — Winrate Tracker</title>
     <script src="https://cdn.tailwindcss.com">
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
 
-        /* ===== CSS VARIABLES (themed) ===== */
         :root {
             --accent: #f59e0b;
             --accent-hover: #d97706;
@@ -43,7 +42,6 @@
             transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
         }
 
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -60,7 +58,6 @@
             background: var(--accent-hover);
         }
 
-        /* ===== UTILITY ===== */
         .accent-color {
             color: var(--accent);
         }
@@ -234,7 +231,7 @@
             color: var(--text-muted);
         }
 
-        /* ===== MODAL ===== */
+        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -261,13 +258,14 @@
             width: 95%;
             box-shadow: 0 25px 60px var(--shadow-color);
             transform: scale(0.95) translateY(10px);
-            transition: transform 0.25s ease, background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+            transition: transform 0.25s ease, background var(--transition-speed) ease,
+                border-color var(--transition-speed) ease;
         }
         .modal-overlay.active .modal-content {
             transform: scale(1) translateY(0);
         }
 
-        /* ===== TOAST ===== */
+        /* Toast */
         #toast {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -276,10 +274,11 @@
             border-radius: 12px;
             box-shadow: 0 12px 40px var(--shadow-color);
             font-weight: 500;
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease,
+                background var(--transition-speed) ease, border-color var(--transition-speed) ease;
         }
 
-        /* ===== THEME SELECTOR ===== */
+        /* Theme swatches */
         .theme-swatch {
             width: 34px;
             height: 34px;
@@ -311,15 +310,6 @@
             font-weight: 700;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
         }
-        .theme-swatch-label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text-muted);
-            text-align: center;
-            margin-top: 2px;
-            transition: color var(--transition-speed) ease;
-        }
 
         .custom-color-wrap {
             position: relative;
@@ -346,7 +336,60 @@
             background: none;
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* + / - buttons on cards */
+        .btn-step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            background: var(--card-border);
+            color: var(--text-primary);
+            line-height: 1;
+        }
+        .btn-step:hover {
+            background: var(--accent);
+            color: var(--accent-text);
+            transform: scale(1.08);
+        }
+        .btn-step:active {
+            transform: scale(0.92);
+        }
+        .btn-step.minus:hover {
+            background: #dc2626;
+            color: #fff;
+        }
+        .btn-step.plus:hover {
+            background: var(--accent);
+            color: var(--accent-text);
+        }
+        .btn-step:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .btn-step:disabled:hover {
+            background: var(--card-border);
+            color: var(--text-primary);
+        }
+
+        .winrate-badge {
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 0.1rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid var(--accent-border);
+            transition: all var(--transition-speed) ease;
+        }
+
         @media (max-width: 640px) {
             .hero-card {
                 padding: 1rem;
@@ -368,9 +411,13 @@
                 width: 30px;
                 height: 30px;
             }
+            .btn-step {
+                width: 28px;
+                height: 28px;
+                font-size: 0.95rem;
+            }
         }
 
-        /* ===== ANIMATIONS ===== */
         @keyframes fadeSlideUp {
             from {
                 opacity: 0;
@@ -384,21 +431,6 @@
         .fade-slide-up {
             animation: fadeSlideUp 0.4s ease forwards;
         }
-
-        @keyframes pulse-glow {
-            0%,
-            100% {
-                box-shadow: 0 0 20px var(--accent-glow);
-            }
-            50% {
-                box-shadow: 0 0 40px var(--accent-glow);
-            }
-        }
-        .pulse-glow {
-            animation: pulse-glow 2.5s ease-in-out infinite;
-        }
-
-        /* Hero card entrance stagger */
         .hero-card {
             animation: fadeSlideUp 0.4s ease forwards;
             opacity: 0;
@@ -448,1003 +480,1034 @@
         <!-- ===== HEADER ===== -->
         <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full accent-bg flex items-center justify-center text-2xl font-black shadow-lg transition-all duration-300 pulse-glow" style="animation-duration:3s;">
-                    ⚔
-                </div>
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">
-                        MLBB <span class="accent-color">Winrate</span> Tracker
-                    </h1>
-                    <p class="text-xs text-muted hidden sm:block">Track your climb — one win at a time.</p>
-                </div>
+                <div class="w-10 h-10 rounded-full accent-bg flex items-center justify-center text-2xl font-black shadow-lg transition-all duration-300"
+                style="animation: pulse-glow 3s ease-in-out infinite;">
+                ⚔
             </div>
-            <div class="flex items-center gap-2 flex-wrap">
-                <button id="exportBtn" class="btn-outline-accent px-4 py-1.5 rounded-lg text-sm flex items-center gap-1.5 transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    Export
-                </button>
-                <label id="importLabel" class="btn-outline-accent px-4 py-1.5 rounded-lg text-sm flex items-center gap-1.5 cursor-pointer transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"/></svg>
-                    Import
-                    <input id="importInput" type="file" accept=".json" class="hidden" />
-                </label>
-                <button id="resetBtn" class="text-muted hover:text-red-400 text-sm px-3 py-1.5 rounded-lg transition" title="Clear all data">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                </button>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-bold tracking-tight">
+                    MLBB <span class="accent-color">Ascend</span>
+                </h1>
+                <p class="text-xs text-muted hidden sm:block">Track your climb — one win at a time.</p>
             </div>
-        </header>
-
-        <!-- ===== THEME SELECTOR ===== -->
-        <section class="bg-card-subtle rounded-2xl border border-card-border p-3 sm:p-4 mb-6 shadow-lg transition-all duration-300">
-            <div class="flex flex-wrap items-center gap-3 sm:gap-4">
-                <span class="text-xs font-semibold text-muted uppercase tracking-wider flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
-                    Theme
-                </span>
-                <div class="flex items-center gap-2 flex-wrap" id="themeSwatches">
-                    <!-- Swatches injected by JS -->
-                </div>
-                <div class="flex items-center gap-2 ml-1">
-                    <div class="custom-color-wrap" id="customColorWrap" title="Custom color">
-                        <input type="color" id="customColorPicker" value="#f59e0b" />
-                    </div>
-                    <span class="text-xs text-muted hidden sm:inline">Custom</span>
-                </div>
-                <span id="themeNameDisplay" class="text-xs text-muted ml-auto font-medium bg-slate-700/30 px-3 py-1 rounded-full border border-slate-700/50 transition-all">Amber</span>
-            </div>
-        </section>
-
-        <!-- Toast -->
-        <div id="toast" class="fixed top-4 right-4 z-50 px-5 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 translate-x-[120%] opacity-0 pointer-events-none">
         </div>
+        <div class="flex items-center gap-2 flex-wrap">
+            <button id="exportBtn" class="btn-outline-accent px-4 py-1.5 rounded-lg text-sm flex items-center gap-1.5 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Export
+            </button>
+            <label id="importLabel" class="btn-outline-accent px-4 py-1.5 rounded-lg text-sm flex items-center gap-1.5 cursor-pointer transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"/></svg>
+                Import
+                <input id="importInput" type="file" accept=".json" class="hidden" />
+            </label>
+            <button id="resetBtn" class="text-muted hover:text-red-400 text-sm px-3 py-1.5 rounded-lg transition" title="Clear all data">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+        </div>
+    </header>
 
-        <!-- ===== GLOBAL WINRATE ===== -->
-        <section class="bg-card rounded-2xl border border-card-border p-5 sm:p-7 mb-8 shadow-xl transition-all duration-300">
-            <div class="flex items-center gap-2 mb-1">
-                <span class="text-xl">🏆</span>
-                <h2 class="section-title">Global Winrate Calculator</h2>
+    <!-- ===== THEME SELECTOR ===== -->
+    <section class="bg-card-subtle rounded-2xl border border-card-border p-3 sm:p-4 mb-6 shadow-lg transition-all duration-300">
+        <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+            <span class="text-xs font-semibold text-muted uppercase tracking-wider flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                Theme
+            </span>
+            <div class="flex items-center gap-2 flex-wrap" id="themeSwatches"></div>
+            <div class="flex items-center gap-2 ml-1">
+                <div class="custom-color-wrap" id="customColorWrap" title="Custom color">
+                    <input type="color" id="customColorPicker" value="#f59e0b" />
+                </div>
+                <span class="text-xs text-muted hidden sm:inline">Custom</span>
             </div>
-            <p class="section-subtitle mb-5">Calculate the win streak needed to reach your target rank winrate.</p>
+            <span id="themeNameDisplay" class="text-xs text-muted ml-auto font-medium bg-slate-700/30 px-3 py-1 rounded-full border border-slate-700/50 transition-all">Amber</span>
+        </div>
+    </section>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Current Matches</label>
-                    <input id="globalMatches" type="number" min="0" step="1" value="100" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="e.g. 100" />
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Current Winrate (%)</label>
-                    <input id="globalWinrate" type="number" min="0" max="100" step="0.1" value="48.5" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="e.g. 48.5" />
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Target Winrate (%)</label>
-                    <input id="globalTarget" type="number" min="0" max="100" step="0.1" value="55" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="e.g. 55" />
-                </div>
-            </div>
-
-            <div class="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <button id="globalCalcBtn" class="btn-accent px-7 py-2.5 rounded-xl text-sm flex items-center gap-2 transition self-start sm:self-auto">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    Calculate Win Streak
-                </button>
-                <div id="globalResult" class="flex items-center gap-4 flex-wrap">
-                    <span class="text-sm text-muted">Streak needed:</span>
-                    <span id="globalStreakDisplay" class="text-2xl font-bold accent-color transition-colors duration-300">—</span>
-                    <span id="globalDetail" class="text-xs text-muted"></span>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== HERO TRACKER ===== -->
-        <section class="bg-card rounded-2xl border border-card-border p-5 sm:p-7 shadow-xl transition-all duration-300">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">🦸</span>
-                    <h2 class="section-title">Hero Tracker</h2>
-                </div>
-                <span id="heroCount" class="text-xs text-muted bg-slate-700/40 px-3 py-1 rounded-full border border-slate-700/50 transition-all">0 heroes</span>
-            </div>
-            <p class="section-subtitle mb-5">Add or update heroes. Duplicate names will update the existing entry.</p>
-
-            <!-- Hero Form -->
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-5">
-                <div>
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Hero Name</label>
-                    <input id="heroName" type="text" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="e.g. Layla" />
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Matches</label>
-                    <input id="heroMatches" type="number" min="0" step="1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="0" />
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Winrate (%)</label>
-                    <input id="heroWinrate" type="number" min="0" max="100" step="0.1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="0" />
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Target Winrate (%) <span class="text-muted font-normal">(optional)</span></label>
-                    <input id="heroTarget" type="number" min="0" max="100" step="0.1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="—" />
-                </div>
-            </div>
-
-            <div class="flex flex-wrap gap-3">
-                <button id="heroAddBtn" class="btn-accent px-6 py-2.5 rounded-xl text-sm flex items-center gap-2 transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                    Add / Update Hero
-                </button>
-                <button id="heroClearBtn" class="text-muted hover:text-slate-300 text-sm px-4 py-2.5 rounded-xl transition">
-                    Clear form
-                </button>
-            </div>
-
-            <div class="divider"></div>
-            <div id="heroGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="empty-state col-span-full">No heroes yet. Add your first hero above!</div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="mt-10 text-center text-xs text-muted border-t border-card-border/60 pt-6 transition-colors">
-            <p>MLBB Winrate Tracker &bull; Data stored locally in your browser.</p>
-        </footer>
+    <!-- Toast -->
+    <div id="toast" class="fixed top-4 right-4 z-50 px-5 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 translate-x-[120%] opacity-0 pointer-events-none">
     </div>
 
-    <!-- ===== EDIT MODAL ===== -->
-    <div id="editModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold flex items-center gap-2">
-                    <span class="accent-color">✏️</span> Edit Hero
-                </h3>
-                <button id="editModalClose" class="text-muted hover:text-white transition text-xl leading-none">&times;</button>
-            </div>
-            <form id="editForm" autocomplete="off">
-                <input type="hidden" id="editHeroId" />
-                <div class="mb-3">
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Hero Name</label>
-                    <input id="editName" type="text" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" disabled />
-                </div>
-                <div class="mb-3">
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Matches (cannot be reduced)</label>
-                    <input id="editMatches" type="number" min="0" step="1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" />
-                    <p id="editMatchesHint" class="text-xs text-amber-400 mt-1 hidden">Minimum matches: <span id="editMinMatches"></span></p>
-                </div>
-                <div class="mb-3">
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Winrate (%)</label>
-                    <input id="editWinrate" type="number" min="0" max="100" step="0.1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" />
-                </div>
-                <div class="mb-4">
-                    <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Target Winrate (%) <span class="text-muted font-normal">(optional)</span></label>
-                    <input id="editTarget" type="number" min="0" max="100" step="0.1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="—" />
-                </div>
-                <div class="flex gap-3 justify-end">
-                    <button type="button" id="editModalCancel" class="px-5 py-2 rounded-xl text-sm text-slate-300 border border-slate-600 hover:bg-slate-700/50 transition">Cancel</button>
-                    <button type="submit" class="btn-accent px-6 py-2 rounded-xl text-sm transition">Save Changes</button>
-                </div>
-            </form>
+    <!-- ===== GLOBAL WINRATE ===== -->
+    <section class="bg-card rounded-2xl border border-card-border p-5 sm:p-7 mb-8 shadow-xl transition-all duration-300">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-xl">🏆</span>
+            <h2 class="section-title">Global Winrate Calculator</h2>
         </div>
+        <p class="section-subtitle mb-5">Calculate the win streak needed to reach your target rank winrate.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Current Matches</label>
+                <input id="globalMatches" type="number" min="0" step="1" value="100" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Current Winrate (%)</label>
+                <input id="globalWinrate" type="number" min="0" max="100" step="0.1" value="48.5" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Target Winrate (%)</label>
+                <input id="globalTarget" type="number" min="0" max="100" step="0.1" value="55" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" />
+            </div>
+        </div>
+
+        <div class="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <button id="globalCalcBtn" class="btn-accent px-7 py-2.5 rounded-xl text-sm flex items-center gap-2 transition self-start sm:self-auto">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Calculate Win Streak
+            </button>
+            <div id="globalResult" class="flex items-center gap-4 flex-wrap">
+                <span class="text-sm text-muted">Streak needed:</span>
+                <span id="globalStreakDisplay" class="text-2xl font-bold accent-color transition-colors duration-300">—</span>
+                <span id="globalDetail" class="text-xs text-muted"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HERO TRACKER ===== -->
+    <section class="bg-card rounded-2xl border border-card-border p-5 sm:p-7 shadow-xl transition-all duration-300">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
+            <div class="flex items-center gap-2">
+                <span class="text-xl">🦸</span>
+                <h2 class="section-title">Hero Tracker</h2>
+            </div>
+            <span id="heroCount" class="text-xs text-muted bg-slate-700/40 px-3 py-1 rounded-full border border-slate-700/50 transition-all">0 heroes</span>
+        </div>
+        <p class="section-subtitle mb-5">Add or update heroes. Duplicate names will update the existing entry.</p>
+
+        <!-- Hero Form -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-5">
+            <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Hero Name</label>
+                <input id="heroName" type="text" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="e.g. Layla" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Matches</label>
+                <input id="heroMatches" type="number" min="0" step="1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="0" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Wins</label>
+                <input id="heroWins" type="number" min="0" step="1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="0" />
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Target Winrate (%) <span class="text-muted font-normal">(optional)</span></label>
+                <input id="heroTarget" type="number" min="0" max="100" step="0.1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="—" />
+            </div>
+        </div>
+
+        <!-- Auto-calc winrate display -->
+        <div class="flex items-center gap-4 mb-4 text-sm">
+            <span class="text-muted">Winrate akan terhitung otomatis:</span>
+            <span id="formWinratePreview" class="font-bold text-lg accent-color">—</span>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+            <button id="heroAddBtn" class="btn-accent px-6 py-2.5 rounded-xl text-sm flex items-center gap-2 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                Add / Update Hero
+            </button>
+            <button id="heroClearBtn" class="text-muted hover:text-slate-300 text-sm px-4 py-2.5 rounded-xl transition">
+                Clear form
+            </button>
+        </div>
+
+        <div class="divider"></div>
+        <div id="heroGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="empty-state col-span-full">No heroes yet. Add your first hero above!</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-10 text-center text-xs text-muted border-t border-card-border/60 pt-6 transition-colors">
+        <p>MLBB Ascend &bull; Data stored locally in your browser.</p>
+    </footer>
+</div>
+
+<!-- ===== EDIT MODAL ===== -->
+<div id="editModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+                <span class="accent-color">✏️</span> Edit Hero
+            </h3>
+            <button id="editModalClose" class="text-muted hover:text-white transition text-xl leading-none">&times;</button>
+        </div>
+        <form id="editForm" autocomplete="off">
+            <input type="hidden" id="editHeroId" />
+            <div class="mb-3">
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Hero Name</label>
+                <input id="editName" type="text" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" disabled />
+            </div>
+            <div class="mb-3">
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Matches (cannot be reduced)</label>
+                <input id="editMatches" type="number" min="0" step="1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" />
+                <p id="editMatchesHint" class="text-xs text-amber-400 mt-1 hidden">Minimum matches: <span id="editMinMatches"></span></p>
+            </div>
+            <div class="mb-3">
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Wins</label>
+                <input id="editWins" type="number" min="0" step="1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" />
+                <p id="editWinsHint" class="text-xs text-amber-400 mt-1 hidden">Wins cannot exceed matches.</p>
+            </div>
+            <div class="mb-4 flex items-center gap-3">
+                <span class="text-xs font-semibold text-muted uppercase tracking-wider">Winrate (auto)</span>
+                <span id="editWinrateDisplay" class="font-bold text-lg accent-color">—</span>
+            </div>
+            <div class="mb-4">
+                <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Target Winrate (%) <span class="text-muted font-normal">(optional)</span></label>
+                <input id="editTarget" type="number" min="0" max="100" step="0.1" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="—" />
+            </div>
+            <div class="flex gap-3 justify-end">
+                <button type="button" id="editModalCancel" class="px-5 py-2 rounded-xl text-sm text-slate-300 border border-slate-600 hover:bg-slate-700/50 transition">Cancel</button>
+                <button type="submit" class="btn-accent px-6 py-2 rounded-xl text-sm transition">Save Changes</button>
+            </div>
+        </form>
     </div>
+</div>
 
-    <script>
-        (function() {
-            'use strict';
+<style>
+    @keyframes pulse-glow {
+        0%,
+        100% {
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        50% {
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+    }
+</style>
 
-            // ============================================================
-            //  THEMES
-            // ============================================================
-            const THEMES = {
-                amber: {
-                    name: 'Amber',
-                    accent: '#f59e0b',
-                    accentHover: '#d97706',
-                    accentLight: 'rgba(245,158,11,0.12)',
-                    accentGlow: 'rgba(245,158,11,0.25)',
-                    accentText: '#0f172a',
-                    accentBorder: 'rgba(245,158,11,0.30)',
-                    badgeBg: 'rgba(245,158,11,0.15)',
-                    badgeBorder: 'rgba(245,158,11,0.25)',
-                },
-                emerald: {
-                    name: 'Emerald',
-                    accent: '#10b981',
-                    accentHover: '#059669',
-                    accentLight: 'rgba(16,185,129,0.12)',
-                    accentGlow: 'rgba(16,185,129,0.25)',
-                    accentText: '#0f172a',
-                    accentBorder: 'rgba(16,185,129,0.30)',
-                    badgeBg: 'rgba(16,185,129,0.15)',
-                    badgeBorder: 'rgba(16,185,129,0.25)',
-                },
-                sapphire: {
-                    name: 'Sapphire',
-                    accent: '#06b6d4',
-                    accentHover: '#0891b2',
-                    accentLight: 'rgba(6,182,212,0.12)',
-                    accentGlow: 'rgba(6,182,212,0.25)',
-                    accentText: '#0f172a',
-                    accentBorder: 'rgba(6,182,212,0.30)',
-                    badgeBg: 'rgba(6,182,212,0.15)',
-                    badgeBorder: 'rgba(6,182,212,0.25)',
-                },
-                ruby: {
-                    name: 'Ruby',
-                    accent: '#f43f5e',
-                    accentHover: '#e11d48',
-                    accentLight: 'rgba(244,63,94,0.12)',
-                    accentGlow: 'rgba(244,63,94,0.25)',
-                    accentText: '#0f172a',
-                    accentBorder: 'rgba(244,63,94,0.30)',
-                    badgeBg: 'rgba(244,63,94,0.15)',
-                    badgeBorder: 'rgba(244,63,94,0.25)',
-                },
-                amethyst: {
-                    name: 'Amethyst',
-                    accent: '#8b5cf6',
-                    accentHover: '#7c3aed',
-                    accentLight: 'rgba(139,92,246,0.12)',
-                    accentGlow: 'rgba(139,92,246,0.25)',
-                    accentText: '#0f172a',
-                    accentBorder: 'rgba(139,92,246,0.30)',
-                    badgeBg: 'rgba(139,92,246,0.15)',
-                    badgeBorder: 'rgba(139,92,246,0.25)',
-                },
-            };
+<script>
+    (function() {
+        'use strict';
 
-            const THEME_NAMES = Object.keys(THEMES);
-            const STORAGE_THEME_KEY = 'mlbb_winrate_theme';
+        // ============================================================
+        //  THEMES
+        // ============================================================
+        const THEMES = {
+            amber: { name: 'Amber', accent: '#f59e0b', accentHover: '#d97706', accentLight: 'rgba(245,158,11,0.12)',
+                accentGlow: 'rgba(245,158,11,0.25)', accentText: '#0f172a', accentBorder: 'rgba(245,158,11,0.30)',
+                badgeBg: 'rgba(245,158,11,0.15)', badgeBorder: 'rgba(245,158,11,0.25)' },
+            emerald: { name: 'Emerald', accent: '#10b981', accentHover: '#059669', accentLight: 'rgba(16,185,129,0.12)',
+                accentGlow: 'rgba(16,185,129,0.25)', accentText: '#0f172a', accentBorder: 'rgba(16,185,129,0.30)',
+                badgeBg: 'rgba(16,185,129,0.15)', badgeBorder: 'rgba(16,185,129,0.25)' },
+            sapphire: { name: 'Sapphire', accent: '#06b6d4', accentHover: '#0891b2', accentLight: 'rgba(6,182,212,0.12)',
+                accentGlow: 'rgba(6,182,212,0.25)', accentText: '#0f172a', accentBorder: 'rgba(6,182,212,0.30)',
+                badgeBg: 'rgba(6,182,212,0.15)', badgeBorder: 'rgba(6,182,212,0.25)' },
+            ruby: { name: 'Ruby', accent: '#f43f5e', accentHover: '#e11d48', accentLight: 'rgba(244,63,94,0.12)',
+                accentGlow: 'rgba(244,63,94,0.25)', accentText: '#0f172a', accentBorder: 'rgba(244,63,94,0.30)',
+                badgeBg: 'rgba(244,63,94,0.15)', badgeBorder: 'rgba(244,63,94,0.25)' },
+            amethyst: { name: 'Amethyst', accent: '#8b5cf6', accentHover: '#7c3aed', accentLight: 'rgba(139,92,246,0.12)',
+                accentGlow: 'rgba(139,92,246,0.25)', accentText: '#0f172a', accentBorder: 'rgba(139,92,246,0.30)',
+                badgeBg: 'rgba(139,92,246,0.15)', badgeBorder: 'rgba(139,92,246,0.25)' },
+        };
+        const THEME_NAMES = Object.keys(THEMES);
+        const STORAGE_THEME_KEY = 'mlbb_winrate_theme';
+        let currentTheme = 'amber';
+        let isCustomTheme = false;
+        let customAccent = '#f59e0b';
 
-            let currentTheme = 'amber';
-            let isCustomTheme = false;
-            let customAccent = '#f59e0b';
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16),
+                g = parseInt(hex.slice(3, 5), 16),
+                b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r},${g},${b},${alpha})`;
+        }
 
-            // ============================================================
-            //  APPLY THEME
-            // ============================================================
-            function applyTheme(themeKey) {
-                const theme = THEMES[themeKey];
-                if (!theme) return;
+        function darkenColor(hex, percent) {
+            const r = parseInt(hex.slice(1, 3), 16),
+                g = parseInt(hex.slice(3, 5), 16),
+                b = parseInt(hex.slice(5, 7), 16);
+            const d = (c) => Math.max(0, c - Math.round(c * percent / 100));
+            return `#${d(r).toString(16).padStart(2,'0')}${d(g).toString(16).padStart(2,'0')}${d(b).toString(16).padStart(2,'0')}`;
+        }
 
-                const root = document.documentElement;
-                root.style.setProperty('--accent', theme.accent);
-                root.style.setProperty('--accent-hover', theme.accentHover);
-                root.style.setProperty('--accent-light', theme.accentLight);
-                root.style.setProperty('--accent-glow', theme.accentGlow);
-                root.style.setProperty('--accent-text', theme.accentText);
-                root.style.setProperty('--accent-border', theme.accentBorder);
-                root.style.setProperty('--badge-bg', theme.badgeBg);
-                root.style.setProperty('--badge-border', theme.badgeBorder);
+        function applyTheme(themeKey) {
+            const theme = THEMES[themeKey];
+            if (!theme) return;
+            const root = document.documentElement;
+            root.style.setProperty('--accent', theme.accent);
+            root.style.setProperty('--accent-hover', theme.accentHover);
+            root.style.setProperty('--accent-light', theme.accentLight);
+            root.style.setProperty('--accent-glow', theme.accentGlow);
+            root.style.setProperty('--accent-text', theme.accentText);
+            root.style.setProperty('--accent-border', theme.accentBorder);
+            root.style.setProperty('--badge-bg', theme.badgeBg);
+            root.style.setProperty('--badge-border', theme.badgeBorder);
+            document.getElementById('themeNameDisplay').textContent = isCustomTheme ? 'Custom' : theme.name;
+            document.querySelectorAll('.theme-swatch').forEach(el => {
+                el.classList.toggle('active', el.dataset.theme === themeKey && !isCustomTheme);
+            });
+            const picker = document.getElementById('customColorPicker');
+            if (picker) picker.value = isCustomTheme ? customAccent : theme.accent;
+            const wrap = document.getElementById('customColorWrap');
+            if (wrap) {
+                const color = isCustomTheme ? customAccent : theme.accent;
+                wrap.style.background = color;
+                wrap.style.borderColor = isCustomTheme ? color : 'var(--card-border)';
+            }
+            currentTheme = themeKey;
+            renderHeroes();
+            runGlobalCalc();
+        }
 
-                // Update theme name display
-                const display = document.getElementById('themeNameDisplay');
-                if (display) {
-                    display.textContent = isCustomTheme ? 'Custom' : theme.name;
-                }
+        function applyCustomTheme(color) {
+            isCustomTheme = true;
+            customAccent = color;
+            const base = THEMES[currentTheme] || THEMES.amber;
+            const ct = { ...base, accent: color, accentHover: darkenColor(color, 15), accentLight: hexToRgba(color, 0.12),
+                accentGlow: hexToRgba(color, 0.25), accentBorder: hexToRgba(color, 0.30), badgeBg: hexToRgba(color,
+                    0.15), badgeBorder: hexToRgba(color, 0.25) };
+            const root = document.documentElement;
+            root.style.setProperty('--accent', ct.accent);
+            root.style.setProperty('--accent-hover', ct.accentHover);
+            root.style.setProperty('--accent-light', ct.accentLight);
+            root.style.setProperty('--accent-glow', ct.accentGlow);
+            root.style.setProperty('--accent-text', ct.accentText);
+            root.style.setProperty('--accent-border', ct.accentBorder);
+            root.style.setProperty('--badge-bg', ct.badgeBg);
+            root.style.setProperty('--badge-border', ct.badgeBorder);
+            document.getElementById('themeNameDisplay').textContent = 'Custom';
+            document.querySelectorAll('.theme-swatch').forEach(el => el.classList.remove('active'));
+            const wrap = document.getElementById('customColorWrap');
+            if (wrap) { wrap.style.background = color;
+                wrap.style.borderColor = color; }
+            renderHeroes();
+            runGlobalCalc();
+            try { localStorage.setItem(STORAGE_THEME_KEY, JSON.stringify({ type: 'custom', color: color })); } catch (_) {}
+        }
 
-                // Update swatch active states
-                document.querySelectorAll('.theme-swatch').forEach(el => {
-                    const key = el.dataset.theme;
-                    el.classList.toggle('active', key === themeKey && !isCustomTheme);
+        function buildThemeSwatches() {
+            const container = document.getElementById('themeSwatches');
+            if (!container) return;
+            container.innerHTML = '';
+            THEME_NAMES.forEach(key => {
+                const theme = THEMES[key];
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex flex-col items-center gap-0.5';
+                const swatch = document.createElement('div');
+                swatch.className = 'theme-swatch';
+                swatch.dataset.theme = key;
+                swatch.style.background = theme.accent;
+                swatch.title = theme.name;
+                swatch.addEventListener('click', function() {
+                    isCustomTheme = false;
+                    applyTheme(key);
+                    try { localStorage.setItem(STORAGE_THEME_KEY, JSON.stringify({ type: 'preset', key: key })); } catch (
+                    _) {}
                 });
+                wrapper.appendChild(swatch);
+                container.appendChild(wrapper);
+            });
+        }
 
-                // Update custom color picker value
-                const picker = document.getElementById('customColorPicker');
-                if (picker && isCustomTheme) {
-                    picker.value = customAccent;
-                } else if (picker) {
-                    picker.value = theme.accent;
+        function loadSavedTheme() {
+            try {
+                const raw = localStorage.getItem(STORAGE_THEME_KEY);
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    if (data.type === 'preset' && data.key && THEMES[data.key]) { isCustomTheme = false;
+                        applyTheme(data.key); return; }
+                    if (data.type === 'custom' && data.color) { isCustomTheme = true;
+                        customAccent = data.color;
+                        applyCustomTheme(data.color); return; }
                 }
+            } catch (_) {}
+            isCustomTheme = false;
+            applyTheme('amber');
+        }
 
-                // Update custom color wrap background
-                const wrap = document.getElementById('customColorWrap');
-                if (wrap) {
-                    const color = isCustomTheme ? customAccent : theme.accent;
-                    wrap.style.background = color;
-                    wrap.style.borderColor = isCustomTheme ? color : 'var(--card-border)';
+        // ============================================================
+        //  DATA LAYER — now stores matches & wins, winrate derived
+        // ============================================================
+        const STORAGE_KEY = 'mlbb_winrate_data';
+        let state = { heroes: [] };
+
+        function computeWinrate(matches, wins) {
+            if (matches <= 0) return 0;
+            return Math.round((wins / matches) * 100 * 10) / 10;
+        }
+
+        function migrateHero(h) {
+            // If wins doesn't exist, compute from winrate
+            if (h.wins === undefined || h.wins === null) {
+                if (h.winrate !== undefined && h.winrate !== null && h.matches > 0) {
+                    h.wins = Math.round(h.matches * h.winrate / 100);
+                } else {
+                    h.wins = 0;
                 }
-
-                currentTheme = themeKey;
-
-                // Re-render heroes to update badge colors, etc.
-                renderHeroes();
-
-                // Re-run global calc display update
-                runGlobalCalc();
             }
+            // Ensure wins <= matches
+            if (h.wins > h.matches) h.wins = h.matches;
+            // Ensure winrate is consistent
+            h.winrate = computeWinrate(h.matches, h.wins);
+            return h;
+        }
 
-            function applyCustomTheme(color) {
-                isCustomTheme = true;
-                customAccent = color;
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => document.querySelectorAll(sel);
 
-                // Build a custom theme object from the current theme's base
-                const base = THEMES[currentTheme] || THEMES.amber;
-                const customTheme = {
-                    ...base,
-                    accent: color,
-                    accentHover: darkenColor(color, 15),
-                    accentLight: hexToRgba(color, 0.12),
-                    accentGlow: hexToRgba(color, 0.25),
-                    accentBorder: hexToRgba(color, 0.30),
-                    badgeBg: hexToRgba(color, 0.15),
-                    badgeBorder: hexToRgba(color, 0.25),
-                };
+        const globalMatches = $('#globalMatches');
+        const globalWinrate = $('#globalWinrate');
+        const globalTarget = $('#globalTarget');
+        const globalCalcBtn = $('#globalCalcBtn');
+        const globalStreakDisplay = $('#globalStreakDisplay');
+        const globalDetail = $('#globalDetail');
 
-                const root = document.documentElement;
-                root.style.setProperty('--accent', customTheme.accent);
-                root.style.setProperty('--accent-hover', customTheme.accentHover);
-                root.style.setProperty('--accent-light', customTheme.accentLight);
-                root.style.setProperty('--accent-glow', customTheme.accentGlow);
-                root.style.setProperty('--accent-text', customTheme.accentText);
-                root.style.setProperty('--accent-border', customTheme.accentBorder);
-                root.style.setProperty('--badge-bg', customTheme.badgeBg);
-                root.style.setProperty('--badge-border', customTheme.badgeBorder);
+        const heroName = $('#heroName');
+        const heroMatches = $('#heroMatches');
+        const heroWins = $('#heroWins');
+        const heroTarget = $('#heroTarget');
+        const heroAddBtn = $('#heroAddBtn');
+        const heroClearBtn = $('#heroClearBtn');
+        const heroGrid = $('#heroGrid');
+        const heroCount = $('#heroCount');
+        const formWinratePreview = $('#formWinratePreview');
 
-                document.getElementById('themeNameDisplay').textContent = 'Custom';
-                document.querySelectorAll('.theme-swatch').forEach(el => el.classList.remove('active'));
+        const exportBtn = $('#exportBtn');
+        const importInput = $('#importInput');
+        const resetBtn = $('#resetBtn');
+        const toast = $('#toast');
 
-                const wrap = document.getElementById('customColorWrap');
-                if (wrap) {
-                    wrap.style.background = color;
-                    wrap.style.borderColor = color;
-                }
+        const editModal = $('#editModal');
+        const editHeroId = $('#editHeroId');
+        const editName = $('#editName');
+        const editMatches = $('#editMatches');
+        const editWins = $('#editWins');
+        const editTarget = $('#editTarget');
+        const editWinrateDisplay = $('#editWinrateDisplay');
+        const editMinMatches = $('#editMinMatches');
+        const editMatchesHint = $('#editMatchesHint');
+        const editWinsHint = $('#editWinsHint');
+        const editForm = $('#editForm');
+        const editModalClose = $('#editModalClose');
+        const editModalCancel = $('#editModalCancel');
 
-                renderHeroes();
-                runGlobalCalc();
+        const customColorPicker = $('#customColorPicker');
 
-                // Save preference
-                try {
-                    localStorage.setItem(STORAGE_THEME_KEY, JSON.stringify({ type: 'custom', color: color }));
-                } catch (_) {}
+        let toastTimer = null;
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        function showToast(msg, isError = false) {
+            if (toastTimer) { clearTimeout(toastTimer);
+                toastTimer = null; }
+            toast.textContent = msg;
+            toast.style.borderColor = isError ? '#dc2626' : 'var(--card-border)';
+            toast.style.background = isError ? '#2d1a1a' : 'var(--card-bg)';
+            toast.style.transform = 'translateX(0)';
+            toast.style.opacity = '1';
+            toast.style.pointerEvents = 'auto';
+            toastTimer = setTimeout(() => {
+                toast.style.transform = 'translateX(120%)';
+                toast.style.opacity = '0';
+                toast.style.pointerEvents = 'none';
+                toastTimer = null;
+            }, 2800);
+        }
+
+        // ============================================================
+        //  WINRATE CALC
+        // ============================================================
+        function calcStreak(matches, winratePercent, targetPercent) {
+            if (matches < 0 || winratePercent < 0 || winratePercent > 100 || targetPercent < 0 || targetPercent > 100)
+                return null;
+            const currentWins = matches * (winratePercent / 100);
+            const targetDecimal = targetPercent / 100;
+            if (targetDecimal === 1) {
+                if (currentWins === matches && matches > 0) return 0;
+                return Infinity;
             }
+            const numerator = targetDecimal * matches - currentWins;
+            const denominator = 1 - targetDecimal;
+            if (denominator <= 0) return null;
+            let x = numerator / denominator;
+            if (x < 0) x = 0;
+            return Math.ceil(x);
+        }
 
-            // ============================================================
-            //  COLOR HELPERS
-            // ============================================================
-            function hexToRgba(hex, alpha) {
-                const r = parseInt(hex.slice(1, 3), 16);
-                const g = parseInt(hex.slice(3, 5), 16);
-                const b = parseInt(hex.slice(5, 7), 16);
-                return `rgba(${r},${g},${b},${alpha})`;
-            }
-
-            function darkenColor(hex, percent) {
-                const r = parseInt(hex.slice(1, 3), 16);
-                const g = parseInt(hex.slice(3, 5), 16);
-                const b = parseInt(hex.slice(5, 7), 16);
-                const darken = (c) => Math.max(0, c - Math.round(c * percent / 100));
-                const nr = darken(r).toString(16).padStart(2, '0');
-                const ng = darken(g).toString(16).padStart(2, '0');
-                const nb = darken(b).toString(16).padStart(2, '0');
-                return `#${nr}${ng}${nb}`;
-            }
-
-            // ============================================================
-            //  THEME UI
-            // ============================================================
-            function buildThemeSwatches() {
-                const container = document.getElementById('themeSwatches');
-                if (!container) return;
-                container.innerHTML = '';
-
-                THEME_NAMES.forEach(key => {
-                    const theme = THEMES[key];
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'flex flex-col items-center gap-0.5';
-
-                    const swatch = document.createElement('div');
-                    swatch.className = 'theme-swatch';
-                    swatch.dataset.theme = key;
-                    swatch.style.background = theme.accent;
-                    swatch.title = theme.name;
-
-                    swatch.addEventListener('click', function() {
-                        isCustomTheme = false;
-                        applyTheme(key);
-                        try {
-                            localStorage.setItem(STORAGE_THEME_KEY, JSON.stringify({ type: 'preset', key: key }));
-                        } catch (_) {}
-                    });
-
-                    wrapper.appendChild(swatch);
-                    container.appendChild(wrapper);
-                });
-            }
-
-            // ============================================================
-            //  LOAD SAVED THEME
-            // ============================================================
-            function loadSavedTheme() {
-                try {
-                    const raw = localStorage.getItem(STORAGE_THEME_KEY);
-                    if (raw) {
-                        const data = JSON.parse(raw);
-                        if (data.type === 'preset' && data.key && THEMES[data.key]) {
-                            isCustomTheme = false;
-                            applyTheme(data.key);
-                            return;
-                        } else if (data.type === 'custom' && data.color) {
-                            isCustomTheme = true;
-                            customAccent = data.color;
-                            applyCustomTheme(data.color);
-                            return;
-                        }
+        // ============================================================
+        //  STATE PERSISTENCE
+        // ============================================================
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object') {
+                        state.heroes = Array.isArray(parsed.heroes) ? parsed.heroes : [];
+                        state.heroes = state.heroes.filter(h => h && typeof h === 'object').map(h => {
+                            if (!h.id) h.id = 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+                            return migrateHero(h);
+                        });
+                        return true;
                     }
-                } catch (_) {}
-                // Default: amber
-                isCustomTheme = false;
-                applyTheme('amber');
-            }
-
-            // ============================================================
-            //  DATA LAYER
-            // ============================================================
-            const STORAGE_KEY = 'mlbb_winrate_data';
-            let state = { heroes: [] };
-
-            // ============================================================
-            //  DOM REFS
-            // ============================================================
-            const $ = (sel) => document.querySelector(sel);
-            const $$ = (sel) => document.querySelectorAll(sel);
-
-            const globalMatches = $('#globalMatches');
-            const globalWinrate = $('#globalWinrate');
-            const globalTarget = $('#globalTarget');
-            const globalCalcBtn = $('#globalCalcBtn');
-            const globalStreakDisplay = $('#globalStreakDisplay');
-            const globalDetail = $('#globalDetail');
-
-            const heroName = $('#heroName');
-            const heroMatches = $('#heroMatches');
-            const heroWinrate = $('#heroWinrate');
-            const heroTarget = $('#heroTarget');
-            const heroAddBtn = $('#heroAddBtn');
-            const heroClearBtn = $('#heroClearBtn');
-            const heroGrid = $('#heroGrid');
-            const heroCount = $('#heroCount');
-
-            const exportBtn = $('#exportBtn');
-            const importInput = $('#importInput');
-            const resetBtn = $('#resetBtn');
-            const toast = $('#toast');
-
-            const editModal = $('#editModal');
-            const editHeroId = $('#editHeroId');
-            const editName = $('#editName');
-            const editMatches = $('#editMatches');
-            const editWinrate = $('#editWinrate');
-            const editTarget = $('#editTarget');
-            const editMinMatches = $('#editMinMatches');
-            const editMatchesHint = $('#editMatchesHint');
-            const editForm = $('#editForm');
-            const editModalClose = $('#editModalClose');
-            const editModalCancel = $('#editModalCancel');
-
-            const customColorPicker = $('#customColorPicker');
-
-            let toastTimer = null;
-
-            // ============================================================
-            //  TOAST
-            // ============================================================
-            function showToast(msg, isError = false) {
-                if (toastTimer) { clearTimeout(toastTimer);
-                    toastTimer = null; }
-                toast.textContent = msg;
-                toast.style.borderColor = isError ? '#dc2626' : 'var(--card-border)';
-                toast.style.background = isError ? '#2d1a1a' : 'var(--card-bg)';
-                toast.style.transform = 'translateX(0)';
-                toast.style.opacity = '1';
-                toast.style.pointerEvents = 'auto';
-                toastTimer = setTimeout(() => {
-                    toast.style.transform = 'translateX(120%)';
-                    toast.style.opacity = '0';
-                    toast.style.pointerEvents = 'none';
-                    toastTimer = null;
-                }, 2800);
-            }
-
-            // ============================================================
-            //  WINRATE CALC
-            // ============================================================
-            function calcStreak(matches, winratePercent, targetPercent) {
-                if (matches < 0 || winratePercent < 0 || winratePercent > 100 || targetPercent < 0 || targetPercent > 100) {
-                    return null;
                 }
-                const currentWins = matches * (winratePercent / 100);
-                const targetDecimal = targetPercent / 100;
-                if (targetDecimal === 1) {
-                    if (currentWins === matches && matches > 0) return 0;
-                    return Infinity;
-                }
-                const numerator = targetDecimal * matches - currentWins;
-                const denominator = 1 - targetDecimal;
-                if (denominator <= 0) return null;
-                let x = numerator / denominator;
-                if (x < 0) x = 0;
-                return Math.ceil(x);
+            } catch (_) { /* ignore */ }
+            return false;
+        }
+
+        function saveState() {
+            try {
+                const data = { heroes: state.heroes };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (_) { /* ignore */ }
+        }
+
+        // ============================================================
+        //  RENDER HEROES (with + / - buttons)
+        // ============================================================
+        function renderHeroes() {
+            const heroes = state.heroes;
+            heroCount.textContent = heroes.length + ' hero' + (heroes.length !== 1 ? 'es' : '');
+
+            if (heroes.length === 0) {
+                heroGrid.innerHTML =
+                    `<div class="empty-state col-span-full">No heroes yet. Add your first hero above!</div>`;
+                return;
             }
 
-            // ============================================================
-            //  STATE PERSISTENCE
-            // ============================================================
-            function loadState() {
-                try {
-                    const raw = localStorage.getItem(STORAGE_KEY);
-                    if (raw) {
-                        const parsed = JSON.parse(raw);
-                        if (parsed && typeof parsed === 'object') {
-                            state.heroes = Array.isArray(parsed.heroes) ? parsed.heroes : [];
-                            state.heroes = state.heroes.filter(h => h && typeof h === 'object').map(h => {
-                                if (!h.id) h.id = 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-                                return h;
-                            });
-                            return true;
-                        }
-                    }
-                } catch (_) { /* ignore */ }
-                return false;
-            }
+            let html = '';
+            for (const h of heroes) {
+                const wr = computeWinrate(h.matches, h.wins);
+                const wins = h.wins || 0;
+                const losses = h.matches - wins;
+                const streak = (h.target !== undefined && h.target !== null && h.target > 0) ?
+                    calcStreak(h.matches, wr, h.target) :
+                    null;
+                const streakDisplay = (streak === null || streak === undefined) ? '—' :
+                    streak === Infinity ? '∞' :
+                    streak;
+                const streakLabel = (h.target && h.target > 0) ?
+                    `Need ${streakDisplay} win${streak === 1 ? '' : 's'} to reach ${h.target}%` :
+                    'No target set';
 
-            function saveState() {
-                try {
-                    const data = { heroes: state.heroes };
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                } catch (_) { /* ignore */ }
-            }
+                const canMinus = wins > 0 && h.matches > 0;
 
-            // ============================================================
-            //  RENDER HEROES
-            // ============================================================
-            function renderHeroes() {
-                const heroes = state.heroes;
-                heroCount.textContent = heroes.length + ' hero' + (heroes.length !== 1 ? 'es' : '');
-
-                if (heroes.length === 0) {
-                    heroGrid.innerHTML =
-                        `<div class="empty-state col-span-full">No heroes yet. Add your first hero above!</div>`;
-                    return;
-                }
-
-                let html = '';
-                for (const h of heroes) {
-                    const wins = h.matches * (h.winrate / 100);
-                    const streak = (h.target !== undefined && h.target !== null && h.target > 0) ?
-                        calcStreak(h.matches, h.winrate, h.target) :
-                        null;
-
-                    const streakDisplay = (streak === null || streak === undefined) ? '—' :
-                        streak === Infinity ? '∞' :
-                        streak;
-
-                    const streakLabel = (h.target && h.target > 0) ?
-                        `Need ${streakDisplay} win${streak === 1 ? '' : 's'} to reach ${h.target}%` :
-                        'No target set';
-
-                    html += `
-                            <div class="hero-card card-glow" data-id="${h.id}">
-                                <div class="flex items-start justify-between gap-2 mb-2">
-                                    <h3 class="text-base font-bold text-white truncate">${escapeHtml(h.name)}</h3>
-                                    <div class="flex gap-1">
-                                        <button class="hero-edit text-slate-500 hover:text-accent transition text-sm p-1 rounded-md hover:bg-slate-700/40" data-id="${h.id}" title="Edit hero">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                        </button>
-                                        <button class="hero-delete text-slate-500 hover:text-red-400 transition text-sm p-1 rounded-md hover:bg-slate-700/40" data-id="${h.id}" title="Delete hero">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-3 gap-2 mt-1">
-                                    <div>
-                                        <div class="stat-label">Matches</div>
-                                        <div class="stat-value">${h.matches}</div>
-                                    </div>
-                                    <div>
-                                        <div class="stat-label">Winrate</div>
-                                        <div class="stat-value accent">${h.winrate}%</div>
-                                    </div>
-                                    <div>
-                                        <div class="stat-label">Wins</div>
-                                        <div class="stat-value">${Math.round(wins)}</div>
-                                    </div>
-                                </div>
-                                ${h.target && h.target > 0 ? `
-                                    <div class="mt-3 pt-2 border-t border-slate-700/60 flex items-center justify-between">
-                                        <span class="badge-win badge-accent px-3 py-0.5 rounded-full text-xs font-semibold border">🎯 ${h.target}%</span>
-                                        <span class="text-xs text-muted">${streakLabel}</span>
-                                    </div>
-                                ` : `
-                                    <div class="mt-3 pt-2 border-t border-slate-700/60 text-xs text-muted">
-                                        No target set
-                                    </div>
-                                `}
+                html += `
+                    <div class="hero-card card-glow" data-id="${h.id}">
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <h3 class="text-base font-bold text-white truncate">${escapeHtml(h.name)}</h3>
+                            <div class="flex gap-1">
+                                <button class="hero-edit text-slate-500 hover:text-accent transition text-sm p-1 rounded-md hover:bg-slate-700/40" data-id="${h.id}" title="Edit hero">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </button>
+                                <button class="hero-delete text-slate-500 hover:text-red-400 transition text-sm p-1 rounded-md hover:bg-slate-700/40" data-id="${h.id}" title="Delete hero">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
                             </div>
-                        `;
-                }
-                heroGrid.innerHTML = html;
+                        </div>
 
-                // Delete events
-                document.querySelectorAll('.hero-delete').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const id = this.dataset.id;
-                        deleteHero(id);
-                    });
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-2 mt-1">
+                            <div>
+                                <div class="stat-label">Matches</div>
+                                <div class="stat-value">${h.matches}</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">Wins</div>
+                                <div class="stat-value accent">${wins}</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">Winrate</div>
+                                <div class="stat-value accent">${wr}%</div>
+                            </div>
+                        </div>
+
+                        <!-- + / - buttons -->
+                        <div class="flex items-center gap-2 mt-3 pt-2 border-t border-slate-700/60">
+                            <button class="btn-step minus hero-step" data-id="${h.id}" data-delta="-1" ${!canMinus ? 'disabled' : ''} title="Remove a win">−</button>
+                            <span class="text-xs text-muted">${losses} L</span>
+                            <button class="btn-step plus hero-step" data-id="${h.id}" data-delta="1" title="Add a win">+</button>
+                            <span class="text-xs text-muted ml-1">${h.target && h.target > 0 ? '🎯 ' + h.target + '%' : ''}</span>
+                            <span class="text-xs text-muted ml-auto">${streakLabel}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            heroGrid.innerHTML = html;
+
+            // Delete
+            document.querySelectorAll('.hero-delete').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    deleteHero(this.dataset.id);
                 });
+            });
 
-                // Edit events
-                document.querySelectorAll('.hero-edit').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const id = this.dataset.id;
-                        openEditModal(id);
-                    });
+            // Edit
+            document.querySelectorAll('.hero-edit').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openEditModal(this.dataset.id);
                 });
+            });
+
+            // Step buttons (+ / -)
+            document.querySelectorAll('.hero-step').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = this.dataset.id;
+                    const delta = parseInt(this.dataset.delta, 10);
+                    stepHero(id, delta);
+                });
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ============================================================
+        //  STEP HERO (+ / -)
+        // ============================================================
+        function stepHero(id, delta) {
+            const hero = state.heroes.find(h => h.id === id);
+            if (!hero) { showToast('Hero not found.', true); return; }
+
+            const newMatches = hero.matches + delta;
+            const newWins = hero.wins + delta;
+
+            if (newWins < 0) { showToast('Cannot remove more wins.', true); return; }
+            if (newWins > newMatches) { showToast('Wins cannot exceed matches.', true); return; }
+            if (newMatches < 0) { showToast('Matches cannot be negative.', true); return; }
+
+            hero.matches = newMatches;
+            hero.wins = newWins;
+            hero.winrate = computeWinrate(hero.matches, hero.wins);
+
+            saveState();
+            renderHeroes();
+            // Update global calc if needed
+            runGlobalCalc();
+
+            const action = delta > 0 ? 'added' : 'removed';
+            showToast(`${delta > 0 ? '+' : ''}${delta} win for "${hero.name}" → ${hero.winrate}%`);
+        }
+
+        // ============================================================
+        //  CRUD
+        // ============================================================
+        function addOrUpdateHero(name, matches, wins, target) {
+            name = name.trim();
+            if (!name) { showToast('Please enter a hero name.', true); return false; }
+            if (isNaN(matches) || matches < 0) { showToast('Please enter a valid number of matches.', true); return false; }
+            if (isNaN(wins) || wins < 0) { showToast('Please enter a valid number of wins.', true); return false; }
+            if (wins > matches) { showToast('Wins cannot exceed matches.', true); return false; }
+            if (target !== undefined && target !== null && target !== '' && !isNaN(target) && target > 0 && target <= 100) {
+                // valid
+            } else {
+                target = null;
             }
 
-            function escapeHtml(str) {
-                if (!str) return '';
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
-            }
+            matches = Math.floor(Number(matches));
+            wins = Math.floor(Number(wins));
+            if (target !== null) target = Number(target);
 
-            // ============================================================
-            //  CRUD
-            // ============================================================
-            function addOrUpdateHero(name, matches, winrate, target) {
-                name = name.trim();
-                if (!name) { showToast('Please enter a hero name.', true); return false; }
-                if (isNaN(matches) || matches < 0) { showToast('Please enter a valid number of matches.', true); return false; }
-                if (isNaN(winrate) || winrate < 0 || winrate > 100) { showToast('Winrate must be between 0 and 100.', true);
-                    return false; }
-                if (target !== undefined && target !== null && target !== '' && !isNaN(target) && target > 0 && target <= 100) {
-                    // valid
-                } else {
-                    target = null;
-                }
-
-                matches = Math.floor(Number(matches));
-                winrate = Number(winrate);
-                if (target !== null) target = Number(target);
-
-                const existingIndex = state.heroes.findIndex(h => h.name.toLowerCase() === name.toLowerCase());
-                if (existingIndex !== -1) {
-                    state.heroes[existingIndex].matches = matches;
-                    state.heroes[existingIndex].winrate = winrate;
-                    state.heroes[existingIndex].target = target;
-                    saveState();
-                    renderHeroes();
-                    showToast(`Updated "${name}" successfully!`);
-                    return true;
-                } else {
-                    const newHero = {
-                        id: 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-                        name: name,
-                        matches: matches,
-                        winrate: winrate,
-                        target: target,
-                    };
-                    state.heroes.push(newHero);
-                    saveState();
-                    renderHeroes();
-                    showToast(`Added "${name}" successfully!`);
-                    return true;
-                }
-            }
-
-            function deleteHero(id) {
-                if (!id) return;
-                const idx = state.heroes.findIndex(h => h.id === id);
-                if (idx === -1) return;
-                const name = state.heroes[idx].name;
-                state.heroes.splice(idx, 1);
+            const existingIndex = state.heroes.findIndex(h => h.name.toLowerCase() === name.toLowerCase());
+            if (existingIndex !== -1) {
+                state.heroes[existingIndex].matches = matches;
+                state.heroes[existingIndex].wins = wins;
+                state.heroes[existingIndex].winrate = computeWinrate(matches, wins);
+                state.heroes[existingIndex].target = target;
                 saveState();
                 renderHeroes();
-                showToast(`Removed "${name}".`);
-            }
-
-            function updateHeroById(id, matches, winrate, target) {
-                const hero = state.heroes.find(h => h.id === id);
-                if (!hero) { showToast('Hero not found.', true); return false; }
-
-                if (isNaN(matches) || matches < 0) { showToast('Invalid matches.', true); return false; }
-                if (isNaN(winrate) || winrate < 0 || winrate > 100) { showToast('Winrate must be 0-100.', true); return false; }
-                if (target !== undefined && target !== null && target !== '' && !isNaN(target) && target > 0 && target <= 100) {
-                    // valid
-                } else {
-                    target = null;
-                }
-
-                matches = Math.floor(Number(matches));
-                winrate = Number(winrate);
-                if (target !== null) target = Number(target);
-
-                if (matches < hero.matches) {
-                    showToast(`Matches cannot be reduced below ${hero.matches}. You have played more games.`, true);
-                    return false;
-                }
-
-                hero.matches = matches;
-                hero.winrate = winrate;
-                hero.target = target;
+                showToast(`Updated "${name}" successfully!`);
+                return true;
+            } else {
+                const newHero = {
+                    id: 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                    name: name,
+                    matches: matches,
+                    wins: wins,
+                    winrate: computeWinrate(matches, wins),
+                    target: target,
+                };
+                state.heroes.push(newHero);
                 saveState();
                 renderHeroes();
-                showToast(`Updated "${hero.name}" successfully!`);
+                showToast(`Added "${name}" successfully!`);
                 return true;
             }
+        }
 
-            function clearAllData() {
-                if (state.heroes.length === 0) {
-                    showToast('No data to clear.', true);
-                    return;
-                }
-                if (confirm('Are you sure you want to delete ALL hero data? This cannot be undone.')) {
-                    state.heroes = [];
-                    saveState();
-                    renderHeroes();
-                    showToast('All data cleared.');
-                }
+        function deleteHero(id) {
+            if (!id) return;
+            const idx = state.heroes.findIndex(h => h.id === id);
+            if (idx === -1) return;
+            const name = state.heroes[idx].name;
+            state.heroes.splice(idx, 1);
+            saveState();
+            renderHeroes();
+            showToast(`Removed "${name}".`);
+        }
+
+        function updateHeroById(id, matches, wins, target) {
+            const hero = state.heroes.find(h => h.id === id);
+            if (!hero) { showToast('Hero not found.', true); return false; }
+
+            if (isNaN(matches) || matches < 0) { showToast('Invalid matches.', true); return false; }
+            if (isNaN(wins) || wins < 0) { showToast('Invalid wins.', true); return false; }
+            if (wins > matches) { showToast('Wins cannot exceed matches.', true); return false; }
+            if (target !== undefined && target !== null && target !== '' && !isNaN(target) && target > 0 && target <= 100) {
+                // valid
+            } else {
+                target = null;
             }
 
-            // ============================================================
-            //  EDIT MODAL
-            // ============================================================
-            function openEditModal(id) {
-                const hero = state.heroes.find(h => h.id === id);
-                if (!hero) { showToast('Hero not found.', true); return; }
+            matches = Math.floor(Number(matches));
+            wins = Math.floor(Number(wins));
+            if (target !== null) target = Number(target);
 
-                editHeroId.value = id;
-                editName.value = hero.name;
-                editMatches.value = hero.matches;
-                editWinrate.value = hero.winrate;
-                editTarget.value = hero.target || '';
-                editMinMatches.textContent = hero.matches;
-                editMatchesHint.classList.remove('hidden');
-                editMatches.min = hero.matches;
-
-                editModal.classList.add('active');
-                editMatches.focus();
+            if (matches < hero.matches) {
+                showToast(`Matches cannot be reduced below ${hero.matches}. You have played more games.`, true);
+                return false;
             }
-
-            function closeEditModal() {
-                editModal.classList.remove('active');
-                editForm.reset();
-                editMatches.min = 0;
-                editMatchesHint.classList.add('hidden');
+            // Also ensure wins don't go below existing wins
+            if (wins < hero.wins && matches === hero.matches) {
+                showToast(`Wins cannot be reduced. Use the "−" button on the card to remove a win.`, true);
+                return false;
             }
+            // If matches increased, wins can stay same or increase
+            // But if matches increased and wins decreased, that's allowed as long as wins >= 0 and wins <= matches
+            // Actually, let's allow any change as long as matches >= old matches and wins >= 0 and wins <= matches
 
-            // ============================================================
-            //  GLOBAL CALC
-            // ============================================================
-            function runGlobalCalc() {
-                const matches = parseInt(globalMatches.value, 10);
-                const winrate = parseFloat(globalWinrate.value);
-                const target = parseFloat(globalTarget.value);
+            hero.matches = matches;
+            hero.wins = wins;
+            hero.winrate = computeWinrate(matches, wins);
+            hero.target = target;
+            saveState();
+            renderHeroes();
+            showToast(`Updated "${hero.name}" successfully!`);
+            return true;
+        }
 
-                if (isNaN(matches) || matches < 0) {
-                    globalStreakDisplay.textContent = '—';
-                    globalDetail.textContent = '';
-                    return;
-                }
-                if (isNaN(winrate) || winrate < 0 || winrate > 100) {
-                    globalStreakDisplay.textContent = '—';
-                    globalDetail.textContent = '';
-                    return;
-                }
-                if (isNaN(target) || target < 0 || target > 100) {
-                    globalStreakDisplay.textContent = '—';
-                    globalDetail.textContent = '';
-                    return;
-                }
-
-                const streak = calcStreak(matches, winrate, target);
-                if (streak === null || streak === undefined) {
-                    globalStreakDisplay.textContent = '—';
-                    globalDetail.textContent = 'Invalid input';
-                    return;
-                }
-
-                if (streak === Infinity) {
-                    globalStreakDisplay.textContent = '∞';
-                    globalDetail.textContent = 'Cannot reach 100% with finite wins';
-                    return;
-                }
-
-                const currentWins = matches * (winrate / 100);
-                const futureMatches = matches + streak;
-                const futureWins = currentWins + streak;
-                const futureWinrate = futureMatches > 0 ? (futureWins / futureMatches) * 100 : 0;
-
-                globalStreakDisplay.textContent = streak;
-                globalDetail.textContent =
-                    `${streak} win${streak !== 1 ? 's' : ''} → ${futureMatches} matches, ${Math.round(futureWins)} wins (${futureWinrate.toFixed(1)}%)`;
+        function clearAllData() {
+            if (state.heroes.length === 0) {
+                showToast('No data to clear.', true);
+                return;
             }
-
-            // ============================================================
-            //  EXPORT / IMPORT
-            // ============================================================
-            function exportData() {
-                const data = { heroes: state.heroes, exportedAt: new Date().toISOString() };
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `mlbb_winrate_${new Date().toISOString().slice(0,10)}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showToast('Data exported successfully!');
-            }
-
-            function importData(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const parsed = JSON.parse(e.target.result);
-                        if (!parsed || typeof parsed !== 'object') {
-                            showToast('Invalid JSON file.', true);
-                            return;
-                        }
-                        let importedHeroes = [];
-                        if (Array.isArray(parsed.heroes)) {
-                            importedHeroes = parsed.heroes.filter(h => h && typeof h === 'object' && h.name && typeof h
-                                .matches === 'number');
-                        } else if (Array.isArray(parsed)) {
-                            importedHeroes = parsed.filter(h => h && typeof h === 'object' && h.name && typeof h
-                                .matches === 'number');
-                        }
-                        if (importedHeroes.length === 0) {
-                            showToast('No valid hero data found in file.', true);
-                            return;
-                        }
-                        importedHeroes = importedHeroes.map(h => {
-                            if (!h.id) h.id = 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-                            return h;
-                        });
-                        if (confirm(`This will replace all current hero data with ${importedHeroes.length} hero(es) from the file. Continue?`)) {
-                            state.heroes = importedHeroes;
-                            saveState();
-                            renderHeroes();
-                            showToast(`Imported ${importedHeroes.length} hero(es) successfully!`);
-                        }
-                    } catch (err) {
-                        showToast('Failed to parse JSON: ' + err.message, true);
-                    }
-                };
-                reader.onerror = function() {
-                    showToast('Failed to read file.', true);
-                };
-                reader.readAsText(file);
-            }
-
-            // ============================================================
-            //  CLEAR FORM
-            // ============================================================
-            function clearHeroForm() {
-                heroName.value = '';
-                heroMatches.value = '';
-                heroWinrate.value = '';
-                heroTarget.value = '';
-                heroName.focus();
-            }
-
-            function setupEnterKey(inputs, callback) {
-                inputs.forEach(inp => {
-                    inp.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') callback();
-                    });
-                });
-            }
-
-            // ============================================================
-            //  INIT
-            // ============================================================
-            function init() {
-                // --- Theme ---
-                buildThemeSwatches();
-                loadSavedTheme();
-
-                // Custom color picker
-                customColorPicker.addEventListener('input', function() {
-                    const color = this.value;
-                    applyCustomTheme(color);
-                    try {
-                        localStorage.setItem(STORAGE_THEME_KEY, JSON.stringify({ type: 'custom', color: color }));
-                    } catch (_) {}
-                });
-
-                // --- Data ---
-                const loaded = loadState();
-                if (!loaded) {
-                    state.heroes = [];
-                    saveState();
-                }
+            if (confirm('Are you sure you want to delete ALL hero data? This cannot be undone.')) {
+                state.heroes = [];
+                saveState();
                 renderHeroes();
+                showToast('All data cleared.');
+            }
+        }
 
-                // --- Global calc ---
-                globalCalcBtn.addEventListener('click', runGlobalCalc);
-                setupEnterKey([globalMatches, globalWinrate, globalTarget], runGlobalCalc);
-                setTimeout(runGlobalCalc, 150);
+        // ============================================================
+        //  EDIT MODAL
+        // ============================================================
+        function openEditModal(id) {
+            const hero = state.heroes.find(h => h.id === id);
+            if (!hero) { showToast('Hero not found.', true); return; }
 
-                // --- Hero add ---
-                heroAddBtn.addEventListener('click', function() {
-                    const name = heroName.value.trim();
-                    const matches = parseInt(heroMatches.value, 10);
-                    const winrate = parseFloat(heroWinrate.value);
-                    const target = heroTarget.value.trim() !== '' ? parseFloat(heroTarget.value) : null;
-                    const success = addOrUpdateHero(name, matches, winrate, target);
-                    if (success) clearHeroForm();
-                });
+            editHeroId.value = id;
+            editName.value = hero.name;
+            editMatches.value = hero.matches;
+            editWins.value = hero.wins;
+            editTarget.value = hero.target || '';
+            editMinMatches.textContent = hero.matches;
+            editMatchesHint.classList.remove('hidden');
+            editMatches.min = hero.matches;
+            editWinrateDisplay.textContent = computeWinrate(hero.matches, hero.wins) + '%';
+            editWinsHint.classList.add('hidden');
 
-                setupEnterKey([heroName, heroMatches, heroWinrate, heroTarget], function() {
-                    heroAddBtn.click();
-                });
+            editModal.classList.add('active');
+            editMatches.focus();
+        }
 
-                heroClearBtn.addEventListener('click', clearHeroForm);
+        function closeEditModal() {
+            editModal.classList.remove('active');
+            editForm.reset();
+            editMatches.min = 0;
+            editMatchesHint.classList.add('hidden');
+            editWinsHint.classList.add('hidden');
+        }
 
-                // --- Export ---
-                exportBtn.addEventListener('click', exportData);
+        // ============================================================
+        //  GLOBAL CALC
+        // ============================================================
+        function runGlobalCalc() {
+            const matches = parseInt(globalMatches.value, 10);
+            const winrate = parseFloat(globalWinrate.value);
+            const target = parseFloat(globalTarget.value);
 
-                // --- Import ---
-                importInput.addEventListener('change', function(e) {
-                    if (this.files && this.files.length > 0) {
-                        importData(this.files[0]);
-                    }
-                    this.value = '';
-                });
-
-                // --- Reset ---
-                resetBtn.addEventListener('click', clearAllData);
-
-                // --- Toast click to dismiss ---
-                toast.addEventListener('click', function() {
-                    if (toastTimer) { clearTimeout(toastTimer);
-                        toastTimer = null; }
-                    this.style.transform = 'translateX(120%)';
-                    this.style.opacity = '0';
-                    this.style.pointerEvents = 'none';
-                });
-
-                // --- Edit modal ---
-                editModalClose.addEventListener('click', closeEditModal);
-                editModalCancel.addEventListener('click', closeEditModal);
-                editModal.addEventListener('click', function(e) {
-                    if (e.target === this) closeEditModal();
-                });
-
-                editForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const id = editHeroId.value;
-                    const matches = parseInt(editMatches.value, 10);
-                    const winrate = parseFloat(editWinrate.value);
-                    const target = editTarget.value.trim() !== '' ? parseFloat(editTarget.value) : null;
-
-                    if (!id) { showToast('No hero selected.', true); return; }
-                    const success = updateHeroById(id, matches, winrate, target);
-                    if (success) {
-                        closeEditModal();
-                    }
-                });
-
-                editMatches.addEventListener('input', function() {
-                    const min = parseInt(this.min, 10);
-                    if (!isNaN(min) && parseInt(this.value, 10) < min) {
-                        editMatchesHint.classList.remove('hidden');
-                        editMinMatches.textContent = min;
-                    } else {
-                        editMatchesHint.classList.add('hidden');
-                    }
-                });
-
-                // --- Save state on beforeunload ---
-                window.addEventListener('beforeunload', function() {
-                    saveState();
-                });
+            if (isNaN(matches) || matches < 0) {
+                globalStreakDisplay.textContent = '—';
+                globalDetail.textContent = '';
+                return;
+            }
+            if (isNaN(winrate) || winrate < 0 || winrate > 100) {
+                globalStreakDisplay.textContent = '—';
+                globalDetail.textContent = '';
+                return;
+            }
+            if (isNaN(target) || target < 0 || target > 100) {
+                globalStreakDisplay.textContent = '—';
+                globalDetail.textContent = '';
+                return;
             }
 
-            document.addEventListener('DOMContentLoaded', init);
+            const streak = calcStreak(matches, winrate, target);
+            if (streak === null || streak === undefined) {
+                globalStreakDisplay.textContent = '—';
+                globalDetail.textContent = 'Invalid input';
+                return;
+            }
 
-        })();
-    </script>
+            if (streak === Infinity) {
+                globalStreakDisplay.textContent = '∞';
+                globalDetail.textContent = 'Cannot reach 100% with finite wins';
+                return;
+            }
+
+            const currentWins = matches * (winrate / 100);
+            const futureMatches = matches + streak;
+            const futureWins = currentWins + streak;
+            const futureWinrate = futureMatches > 0 ? (futureWins / futureMatches) * 100 : 0;
+
+            globalStreakDisplay.textContent = streak;
+            globalDetail.textContent =
+                `${streak} win${streak !== 1 ? 's' : ''} → ${futureMatches} matches, ${Math.round(futureWins)} wins (${futureWinrate.toFixed(1)}%)`;
+        }
+
+        // ============================================================
+        //  FORM WINRATE PREVIEW
+        // ============================================================
+        function updateFormPreview() {
+            const m = parseInt(heroMatches.value, 10) || 0;
+            const w = parseInt(heroWins.value, 10) || 0;
+            if (m <= 0) { formWinratePreview.textContent = '—'; return; }
+            const wr = computeWinrate(m, w);
+            formWinratePreview.textContent = wr + '%';
+            // Color based on value
+            if (wr >= 60) formWinratePreview.style.color = '#22c55e';
+            else if (wr >= 50) formWinratePreview.style.color = 'var(--accent)';
+            else formWinratePreview.style.color = '#ef4444';
+        }
+
+        // ============================================================
+        //  EXPORT / IMPORT
+        // ============================================================
+        function exportData() {
+            const data = { heroes: state.heroes, exportedAt: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mlbb_ascend_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('Data exported successfully!');
+        }
+
+        function importData(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (!parsed || typeof parsed !== 'object') {
+                        showToast('Invalid JSON file.', true);
+                        return;
+                    }
+                    let importedHeroes = [];
+                    if (Array.isArray(parsed.heroes)) {
+                        importedHeroes = parsed.heroes.filter(h => h && typeof h === 'object' && h.name && typeof h
+                            .matches === 'number');
+                    } else if (Array.isArray(parsed)) {
+                        importedHeroes = parsed.filter(h => h && typeof h === 'object' && h.name && typeof h
+                            .matches === 'number');
+                    }
+                    if (importedHeroes.length === 0) {
+                        showToast('No valid hero data found in file.', true);
+                        return;
+                    }
+                    importedHeroes = importedHeroes.map(h => {
+                        if (!h.id) h.id = 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+                        return migrateHero(h);
+                    });
+                    if (confirm(`This will replace all current hero data with ${importedHeroes.length} hero(es) from the file. Continue?`)) {
+                        state.heroes = importedHeroes;
+                        saveState();
+                        renderHeroes();
+                        showToast(`Imported ${importedHeroes.length} hero(es) successfully!`);
+                    }
+                } catch (err) {
+                    showToast('Failed to parse JSON: ' + err.message, true);
+                }
+            };
+            reader.onerror = function() {
+                showToast('Failed to read file.', true);
+            };
+            reader.readAsText(file);
+        }
+
+        // ============================================================
+        //  CLEAR FORM
+        // ============================================================
+        function clearHeroForm() {
+            heroName.value = '';
+            heroMatches.value = '';
+            heroWins.value = '';
+            heroTarget.value = '';
+            formWinratePreview.textContent = '—';
+            heroName.focus();
+        }
+
+        function setupEnterKey(inputs, callback) {
+            inputs.forEach(inp => {
+                inp.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') callback();
+                });
+            });
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            // --- Theme ---
+            buildThemeSwatches();
+            loadSavedTheme();
+            customColorPicker.addEventListener('input', function() {
+                const color = this.value;
+                applyCustomTheme(color);
+                try { localStorage.setItem(STORAGE_THEME_KEY, JSON.stringify({ type: 'custom', color: color })); } catch (
+                _) {}
+            });
+
+            // --- Data ---
+            const loaded = loadState();
+            if (!loaded) {
+                state.heroes = [];
+                saveState();
+            }
+            renderHeroes();
+
+            // --- Global calc ---
+            globalCalcBtn.addEventListener('click', runGlobalCalc);
+            setupEnterKey([globalMatches, globalWinrate, globalTarget], runGlobalCalc);
+            setTimeout(runGlobalCalc, 150);
+
+            // --- Hero add ---
+            heroAddBtn.addEventListener('click', function() {
+                const name = heroName.value.trim();
+                const matches = parseInt(heroMatches.value, 10);
+                const wins = parseInt(heroWins.value, 10);
+                const target = heroTarget.value.trim() !== '' ? parseFloat(heroTarget.value) : null;
+                const success = addOrUpdateHero(name, matches, wins, target);
+                if (success) clearHeroForm();
+            });
+
+            setupEnterKey([heroName, heroMatches, heroWins, heroTarget], function() {
+                heroAddBtn.click();
+            });
+
+            heroClearBtn.addEventListener('click', clearHeroForm);
+
+            // --- Form preview ---
+            heroMatches.addEventListener('input', updateFormPreview);
+            heroWins.addEventListener('input', updateFormPreview);
+
+            // --- Export ---
+            exportBtn.addEventListener('click', exportData);
+
+            // --- Import ---
+            importInput.addEventListener('change', function(e) {
+                if (this.files && this.files.length > 0) {
+                    importData(this.files[0]);
+                }
+                this.value = '';
+            });
+
+            // --- Reset ---
+            resetBtn.addEventListener('click', clearAllData);
+
+            // --- Toast click dismiss ---
+            toast.addEventListener('click', function() {
+                if (toastTimer) { clearTimeout(toastTimer);
+                    toastTimer = null; }
+                this.style.transform = 'translateX(120%)';
+                this.style.opacity = '0';
+                this.style.pointerEvents = 'none';
+            });
+
+            // --- Edit modal ---
+            editModalClose.addEventListener('click', closeEditModal);
+            editModalCancel.addEventListener('click', closeEditModal);
+            editModal.addEventListener('click', function(e) {
+                if (e.target === this) closeEditModal();
+            });
+
+            editForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const id = editHeroId.value;
+                const matches = parseInt(editMatches.value, 10);
+                const wins = parseInt(editWins.value, 10);
+                const target = editTarget.value.trim() !== '' ? parseFloat(editTarget.value) : null;
+
+                if (!id) { showToast('No hero selected.', true); return; }
+                const success = updateHeroById(id, matches, wins, target);
+                if (success) {
+                    closeEditModal();
+                }
+            });
+
+            // Real-time validation in edit modal
+            editMatches.addEventListener('input', function() {
+                const min = parseInt(this.min, 10);
+                const val = parseInt(this.value, 10);
+                if (!isNaN(min) && val < min) {
+                    editMatchesHint.classList.remove('hidden');
+                    editMinMatches.textContent = min;
+                } else {
+                    editMatchesHint.classList.add('hidden');
+                }
+                // Update winrate preview
+                const m = parseInt(editMatches.value, 10) || 0;
+                const w = parseInt(editWins.value, 10) || 0;
+                if (m > 0) editWinrateDisplay.textContent = computeWinrate(m, w) + '%';
+                else editWinrateDisplay.textContent = '—';
+                // Check wins <= matches
+                if (w > m && m > 0) {
+                    editWinsHint.classList.remove('hidden');
+                } else {
+                    editWinsHint.classList.add('hidden');
+                }
+            });
+
+            editWins.addEventListener('input', function() {
+                const m = parseInt(editMatches.value, 10) || 0;
+                const w = parseInt(this.value, 10) || 0;
+                if (m > 0) editWinrateDisplay.textContent = computeWinrate(m, w) + '%';
+                else editWinrateDisplay.textContent = '—';
+                if (w > m && m > 0) {
+                    editWinsHint.classList.remove('hidden');
+                } else {
+                    editWinsHint.classList.add('hidden');
+                }
+            });
+
+            // --- Save state on beforeunload ---
+            window.addEventListener('beforeunload', function() {
+                saveState();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+
+    })();
+</script>
 
 </body>
 </html>
