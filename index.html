@@ -141,19 +141,6 @@
             color: var(--accent-text);
         }
 
-        .btn-danger {
-            background: #dc2626;
-            color: #fff;
-            font-weight: 600;
-            transition: background 0.2s, transform 0.1s;
-        }
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-        .btn-danger:active {
-            transform: scale(0.97);
-        }
-
         .hero-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -221,7 +208,6 @@
             background: var(--card-bg);
             transition: background var(--transition-speed) ease;
         }
-
         .text-muted {
             color: var(--text-muted);
         }
@@ -456,6 +442,16 @@
             border-color: var(--accent);
         }
 
+        .season-tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 0.1rem 0.6rem;
+            border-radius: 10px;
+            border: 1px solid var(--accent-border);
+        }
+
         @keyframes fadeSlideUp {
             from {
                 opacity: 0;
@@ -478,7 +474,6 @@
         .pulse-glow {
             animation: pulse-glow 2.5s ease-in-out infinite;
         }
-
         .hero-card {
             animation: fadeSlideUp 0.4s ease forwards;
             opacity: 0;
@@ -518,16 +513,6 @@
         }
         .hero-card:nth-child(12) {
             animation-delay: 0.46s;
-        }
-
-        .season-tag {
-            display: inline-block;
-            font-size: 0.6rem;
-            background: var(--accent-light);
-            color: var(--accent);
-            padding: 0.1rem 0.6rem;
-            border-radius: 10px;
-            border: 1px solid var(--accent-border);
         }
 
         @media (max-width: 640px) {
@@ -621,7 +606,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     Season
                 </span>
-                <select id="seasonSelector" class="input-dark rounded-xl px-4 py-1.5 text-sm w-40">
+                <select id="seasonSelector" class="input-dark rounded-xl px-4 py-1.5 text-sm w-48">
                     <option value="__all">All Seasons</option>
                 </select>
                 <button id="addSeasonBtn" class="btn-accent px-3 py-1.5 rounded-xl text-xs transition" title="Add new season">
@@ -789,7 +774,9 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Season</label>
-                        <input id="heroSeason" type="text" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="Season 34" />
+                        <select id="heroSeason" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm">
+                            <option value="">— Select Season —</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Notes</label>
@@ -910,7 +897,9 @@
                 </div>
                 <div class="mb-3">
                     <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Season</label>
-                    <input id="editSeason" type="text" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm" placeholder="Season 34" />
+                    <select id="editSeason" class="input-dark w-full rounded-xl px-4 py-2.5 text-sm">
+                        <option value="">— Select Season —</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label class="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">Matches</label>
@@ -1118,7 +1107,11 @@
             //  DATA LAYER
             // ============================================================
             const STORAGE_KEY = 'mlbb_winrate_data';
-            let state = { heroes: [], currentSeason: '__all' };
+            let state = {
+                heroes: [],
+                seasons: [], // master list of all seasons ever created
+                currentSeason: '__all'
+            };
 
             // ============================================================
             //  DOM REFS
@@ -1126,7 +1119,6 @@
             const $ = (s) => document.querySelector(s);
             const $$ = (s) => document.querySelectorAll(s);
 
-            // Global calc
             const globalMatches = $('#globalMatches'),
                 globalWinrate = $('#globalWinrate'),
                 globalTarget = $('#globalTarget');
@@ -1134,7 +1126,6 @@
                 globalStreakDisplay = $('#globalStreakDisplay'),
                 globalDetail = $('#globalDetail');
 
-            // Hero form
             const heroName = $('#heroName'),
                 heroRole = $('#heroRole'),
                 heroMatches = $('#heroMatches'),
@@ -1150,19 +1141,16 @@
                 sortHero = $('#sortHero'),
                 filterRole = $('#filterRole');
 
-            // Season selector
             const seasonSelector = $('#seasonSelector');
             const seasonBadge = $('#seasonBadge');
             const addSeasonBtn = $('#addSeasonBtn');
 
-            // Export / Import / Reset
             const exportJsonBtn = $('#exportJsonBtn'),
                 exportCsvBtn = $('#exportCsvBtn');
             const importInput = $('#importInput'),
                 resetBtn = $('#resetBtn');
             const toast = $('#toast');
 
-            // Edit modal
             const editModal = $('#editModal'),
                 editHeroId = $('#editHeroId'),
                 editName = $('#editName'),
@@ -1178,17 +1166,13 @@
                 editModalClose = $('#editModalClose'),
                 editModalCancel = $('#editModalCancel');
 
-            // Compare
             const compareHeroA = $('#compareHeroA'),
                 compareHeroB = $('#compareHeroB'),
                 compareBtn = $('#compareBtn'),
                 compareResult = $('#compareResult');
 
-            // Dashboard
             const dashDateFilter = $('#dashDateFilter');
             let dashChartInstance = null;
-
-            // Custom color
             const customColorPicker = $('#customColorPicker');
 
             let toastTimer = null;
@@ -1238,19 +1222,20 @@
             //  SEASON UTILITIES
             // ============================================================
             function getAllSeasons() {
-                const seasons = new Set();
-                state.heroes.forEach(h => {
-                    if (h.seasons) {
-                        Object.keys(h.seasons).forEach(s => seasons.add(s));
-                    }
-                });
-                return Array.from(seasons).sort();
+                // Return master list of seasons from state, sorted
+                return [...state.seasons].sort();
+            }
+
+            function ensureSeasonExists(season) {
+                if (season && season !== '__all' && !state.seasons.includes(season)) {
+                    state.seasons.push(season);
+                    state.seasons.sort();
+                }
             }
 
             function getHeroSeasonStats(hero, season) {
                 if (!hero.seasons) return null;
                 if (season === '__all') {
-                    // Aggregate all seasons
                     let totalMatches = 0,
                         totalWins = 0,
                         history = [];
@@ -1279,20 +1264,10 @@
                 }
             }
 
-            function getHeroCurrentSeasonStats(hero) {
-                const season = state.currentSeason;
-                return getHeroSeasonStats(hero, season);
-            }
-
-            function getHeroAllSeasonStats(hero) {
-                return getHeroSeasonStats(hero, '__all');
-            }
-
             function getHeroStatsForDisplay(hero) {
-                // Returns stats based on current season filter
                 const season = state.currentSeason;
                 if (season === '__all') {
-                    return getHeroAllSeasonStats(hero);
+                    return getHeroSeasonStats(hero, '__all');
                 } else {
                     return getHeroSeasonStats(hero, season);
                 }
@@ -1308,11 +1283,14 @@
                         const parsed = JSON.parse(raw);
                         if (parsed && typeof parsed === 'object') {
                             state.heroes = Array.isArray(parsed.heroes) ? parsed.heroes : [];
+                            state.seasons = Array.isArray(parsed.seasons) ? parsed.seasons : [];
                             state.currentSeason = parsed.currentSeason || '__all';
+
+                            // Ensure each hero's seasons are valid and collect any missing seasons
                             state.heroes = state.heroes.filter(h => h && typeof h === 'object').map(h => {
                                 if (!h.id) h.id = 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2,
                                     6);
-                                // Migrate old data: if no seasons, create one
+                                // Migrate old data
                                 if (!h.seasons || typeof h.seasons !== 'object') {
                                     const legacySeason = 'Season 34';
                                     h.seasons = {};
@@ -1323,13 +1301,12 @@
                                         winrate: h.winrate || 0,
                                         history: Array.isArray(h.history) ? h.history : [],
                                     };
-                                    // Remove old top-level props to avoid confusion
                                     delete h.matches;
                                     delete h.wins;
                                     delete h.winrate;
                                     delete h.history;
                                 }
-                                // Ensure each season has proper structure
+                                // Ensure each season has proper structure and add to master list
                                 for (const s in h.seasons) {
                                     const data = h.seasons[s];
                                     if (!data.history) data.history = [];
@@ -1337,36 +1314,52 @@
                                         data.wins = Math.round((data.matches || 0) * ((data.winrate || 0) /
                                         100));
                                     }
-                                    // Sort history
                                     data.history.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                                    // Add season to master list
+                                    if (s && !state.seasons.includes(s)) {
+                                        state.seasons.push(s);
+                                    }
                                 }
                                 if (!h.role) h.role = '';
                                 if (!h.notes) h.notes = '';
                                 return h;
                             });
-                            // Fix currentSeason if it doesn't exist
-                            const allSeasons = getAllSeasons();
-                            if (state.currentSeason !== '__all' && !allSeasons.includes(state.currentSeason)) {
+                            // Sort seasons
+                            state.seasons.sort();
+                            // Ensure currentSeason is valid
+                            if (state.currentSeason !== '__all' && !state.seasons.includes(state.currentSeason)) {
                                 state.currentSeason = '__all';
                             }
                             return true;
                         }
                     }
-                } catch (_) {}
+                } catch (_) { /* ignore */ }
                 return false;
             }
 
             function saveState() {
                 try {
+                    // Ensure all seasons from heroes are in master list
+                    state.heroes.forEach(h => {
+                        if (h.seasons) {
+                            Object.keys(h.seasons).forEach(s => {
+                                if (s && !state.seasons.includes(s)) {
+                                    state.seasons.push(s);
+                                }
+                            });
+                        }
+                    });
+                    state.seasons.sort();
                     localStorage.setItem(STORAGE_KEY, JSON.stringify({
                         heroes: state.heroes,
+                        seasons: state.seasons,
                         currentSeason: state.currentSeason
                     }));
-                } catch (_) {}
+                } catch (_) { /* ignore */ }
             }
 
             // ============================================================
-            //  UTILITY: get current streak from history
+            //  UTILITY: get current streak
             // ============================================================
             function getCurrentStreak(history) {
                 if (!history || history.length === 0) return { streak: 0, type: 'none', longest: 0 };
@@ -1431,6 +1424,7 @@
             // ============================================================
             function renderAll() {
                 updateSeasonSelector();
+                updateHeroSeasonSelect();
                 renderHeroes();
                 updateDashboard();
                 updateCompareDropdowns();
@@ -1452,13 +1446,14 @@
                 }
                 runGlobalCalc();
                 updateSeasonBadge();
+                // Update edit modal season dropdown too
+                updateEditSeasonSelect();
             }
 
             function updateSeasonBadge() {
                 const season = state.currentSeason;
                 const display = season === '__all' ? 'All Seasons' : season;
                 seasonBadge.textContent = `Showing: ${display}`;
-                // Set dropdown value
                 seasonSelector.value = season;
             }
 
@@ -1477,7 +1472,102 @@
                     .currentSeason;
                 else seasonSelector.value = '__all';
                 state.currentSeason = seasonSelector.value;
-                updateSeasonBadge();
+            }
+
+            // ============================================================
+            //  HERO SEASON SELECT (dropdown for hero form)
+            // ============================================================
+            function updateHeroSeasonSelect() {
+                const seasons = getAllSeasons();
+                const sel = heroSeason;
+                const currentVal = sel.value;
+                sel.innerHTML = '';
+                if (seasons.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.value = '';
+                    opt.textContent = '— No seasons yet —';
+                    sel.appendChild(opt);
+                } else {
+                    seasons.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s;
+                        opt.textContent = s;
+                        sel.appendChild(opt);
+                    });
+                }
+                // Add "Create New" option
+                const optNew = document.createElement('option');
+                optNew.value = '__new__';
+                optNew.textContent = '+ Create New Season...';
+                sel.appendChild(optNew);
+
+                // Set value: try currentVal, then current season, then first season
+                if (currentVal && seasons.includes(currentVal)) sel.value = currentVal;
+                else if (state.currentSeason !== '__all' && seasons.includes(state.currentSeason)) sel.value = state
+                    .currentSeason;
+                else if (seasons.length > 0) sel.value = seasons[0];
+                else sel.value = '';
+
+                // Remove old change listeners to avoid duplicates
+                sel._listener && sel.removeEventListener('change', sel._listener);
+                sel._listener = function() {
+                    if (this.value === '__new__') {
+                        const newSeason = prompt('Enter new season name (e.g. Season 35):', 'Season ' + (getAllSeasons()
+                            .length + 34));
+                        if (newSeason && newSeason.trim()) {
+                            const s = newSeason.trim();
+                            if (getAllSeasons().includes(s)) {
+                                showToast(`Season "${s}" already exists.`, true);
+                                this.value = currentVal || (getAllSeasons().length > 0 ? getAllSeasons()[0] :
+                                    '');
+                                return;
+                            }
+                            // Add to master seasons list
+                            state.seasons.push(s);
+                            state.seasons.sort();
+                            state.currentSeason = s;
+                            saveState();
+                            renderAll();
+                            showToast(`Season "${s}" created! Now add a hero with this season.`);
+                            // After render, set dropdown to the new season
+                            setTimeout(() => {
+                                heroSeason.value = s;
+                            }, 50);
+                        } else {
+                            // Reset to previous value
+                            this.value = currentVal || (getAllSeasons().length > 0 ? getAllSeasons()[0] : '');
+                        }
+                    }
+                };
+                sel.addEventListener('change', sel._listener);
+            }
+
+            // ============================================================
+            //  EDIT SEASON SELECT
+            // ============================================================
+            function updateEditSeasonSelect() {
+                const seasons = getAllSeasons();
+                const sel = editSeason;
+                const currentVal = sel.value;
+                sel.innerHTML = '';
+                if (seasons.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.value = '';
+                    opt.textContent = '— No seasons yet —';
+                    sel.appendChild(opt);
+                } else {
+                    seasons.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s;
+                        opt.textContent = s;
+                        sel.appendChild(opt);
+                    });
+                }
+                if (currentVal && seasons.includes(currentVal)) sel.value = currentVal;
+                else if (state.currentSeason !== '__all' && seasons.includes(state.currentSeason)) sel.value = state
+                    .currentSeason;
+                else if (seasons.length > 0) sel.value = seasons[0];
+                else sel.value = '';
             }
 
             // ============================================================
@@ -1489,7 +1579,6 @@
                 const roleFilter = filterRole.value;
 
                 let heroes = state.heroes.map(h => {
-                    // Get stats for current season filter
                     const stats = getHeroStatsForDisplay(h);
                     const matches = stats ? stats.matches : 0;
                     const wins = stats ? stats.wins : 0;
@@ -1557,7 +1646,6 @@
                         historyPreview = '<span class="text-muted text-xs">—</span>';
                     }
 
-                    // Show which seasons this hero has data for
                     const seasonTags = h.seasons ? Object.keys(h.seasons).map(s =>
                         `<span class="season-tag">${escapeHtml(s)}</span>`).join(' ') : '';
 
@@ -1670,7 +1758,7 @@
             }
 
             // ============================================================
-            //  QUICK ACTIONS: WIN / LOSS (updates current season)
+            //  QUICK ACTIONS
             // ============================================================
             function recordWin(id) {
                 const hero = state.heroes.find(h => h.id === id);
@@ -1685,6 +1773,7 @@
                 if (!hero.seasons[season]) {
                     hero.seasons[season] = { matches: 0, wins: 0, winrate: 0, history: [] };
                 }
+                ensureSeasonExists(season);
 
                 const data = hero.seasons[season];
                 data.matches = (data.matches || 0) + 1;
@@ -1712,6 +1801,7 @@
                 if (!hero.seasons[season]) {
                     hero.seasons[season] = { matches: 0, wins: 0, winrate: 0, history: [] };
                 }
+                ensureSeasonExists(season);
 
                 const data = hero.seasons[season];
                 data.matches = (data.matches || 0) + 1;
@@ -1741,7 +1831,8 @@
                     return false; }
                 if (isNaN(winrate) || winrate < 0 || winrate > 100) { showToast('Winrate must be between 0 and 100.',
                         true); return false; }
-                const seasonName = season.trim() || 'Season 34';
+                const seasonName = season.trim();
+                if (!seasonName) { showToast('Please select a season.', true); return false; }
                 if (target !== undefined && target !== null && target !== '' && !isNaN(target) && target > 0 && target <=
                     100) { /* valid */ } else target = null;
 
@@ -1749,6 +1840,9 @@
                 winrate = Number(winrate);
                 if (target !== null) target = Number(target);
                 const wins = Math.round(matches * (winrate / 100));
+
+                // Ensure season exists in master list
+                ensureSeasonExists(seasonName);
 
                 const existingIndex = state.heroes.findIndex(h => h.name.toLowerCase() === name.toLowerCase());
                 if (existingIndex !== -1) {
@@ -1808,14 +1902,14 @@
                 if (isNaN(matches) || matches < 0) { showToast('Invalid matches.', true); return false; }
                 if (isNaN(winrate) || winrate < 0 || winrate > 100) { showToast('Winrate must be 0-100.', true);
                     return false; }
-                const seasonName = season.trim() || 'Season 34';
+                const seasonName = season.trim();
+                if (!seasonName) { showToast('Please select a season.', true); return false; }
                 if (target !== undefined && target !== null && target !== '' && !isNaN(target) && target > 0 && target <=
                     100) { /* valid */ } else target = null;
                 matches = Math.floor(Number(matches));
                 winrate = Number(winrate);
                 if (target !== null) target = Number(target);
 
-                // Check if we're reducing matches for this season
                 if (hero.seasons && hero.seasons[seasonName]) {
                     const existing = hero.seasons[seasonName];
                     if (matches < existing.matches) {
@@ -1823,6 +1917,9 @@
                         return false;
                     }
                 }
+
+                // Ensure season exists in master list
+                ensureSeasonExists(seasonName);
 
                 hero.role = role || '';
                 hero.notes = notes || '';
@@ -1847,6 +1944,7 @@
                 if (state.heroes.length === 0) { showToast('No data to clear.', true); return; }
                 if (confirm('Delete ALL hero data? This cannot be undone.')) {
                     state.heroes = [];
+                    state.seasons = [];
                     state.currentSeason = '__all';
                     saveState();
                     renderAll();
@@ -1861,10 +1959,9 @@
                 const hero = state.heroes.find(h => h.id === id);
                 if (!hero) { showToast('Hero not found.', true); return; }
 
-                // Find first season to edit, or use current season
                 const seasons = hero.seasons ? Object.keys(hero.seasons) : [];
                 const defaultSeason = seasons.length > 0 ? seasons[0] : state.currentSeason !== '__all' ? state
-                    .currentSeason : 'Season 34';
+                    .currentSeason : (getAllSeasons().length > 0 ? getAllSeasons()[0] : '');
 
                 const seasonToEdit = defaultSeason;
                 const data = hero.seasons && hero.seasons[seasonToEdit] ? hero.seasons[seasonToEdit] : { matches: 0,
@@ -1873,7 +1970,17 @@
                 editHeroId.value = id;
                 editName.value = hero.name;
                 editRole.value = hero.role || '';
-                editSeason.value = seasonToEdit;
+                // Update season dropdown first, then set value
+                updateEditSeasonSelect();
+                // Wait a tick for the dropdown to update
+                setTimeout(() => {
+                    if (editSeason.querySelector(`option[value="${seasonToEdit}"]`)) {
+                        editSeason.value = seasonToEdit;
+                    } else if (editSeason.querySelector('option:not([value=""]):not([value="__new__"])')) {
+                        editSeason.value = editSeason.querySelector('option:not([value=""]):not([value="__new__"])')
+                            .value;
+                    }
+                }, 20);
                 editMatches.value = data.matches || 0;
                 editWinrate.value = data.winrate || 0;
                 editTarget.value = hero.target || '';
@@ -2303,8 +2410,12 @@
             //  EXPORT / IMPORT
             // ============================================================
             function exportJSON() {
-                const data = { heroes: state.heroes, currentSeason: state.currentSeason, exportedAt: new Date()
-                        .toISOString() };
+                const data = {
+                    heroes: state.heroes,
+                    seasons: state.seasons,
+                    currentSeason: state.currentSeason,
+                    exportedAt: new Date().toISOString()
+                };
                 download(JSON.stringify(data, null, 2), `mlbb_winrate_${new Date().toISOString().slice(0,10)}.json`,
                     'application/json');
                 showToast('JSON exported!');
@@ -2378,10 +2489,20 @@
                             if (!h.notes) h.notes = '';
                             return h;
                         });
+
+                        // Merge seasons from parsed
+                        const importedSeasons = Array.isArray(parsed.seasons) ? parsed.seasons : [];
+                        const allSeasons = new Set([...importedSeasons, ...imported.flatMap(h => Object.keys(h
+                            .seasons))]);
+
                         if (confirm(
                                 `Replace current data with ${imported.length} hero(es)?`)) {
                             state.heroes = imported;
+                            state.seasons = Array.from(allSeasons).sort();
                             state.currentSeason = parsed.currentSeason || '__all';
+                            if (state.currentSeason !== '__all' && !state.seasons.includes(state.currentSeason)) {
+                                state.currentSeason = '__all';
+                            }
                             saveState();
                             renderAll();
                             showToast(`Imported ${imported.length} heroes!`);
@@ -2401,7 +2522,14 @@
                 heroMatches.value = '';
                 heroWinrate.value = '';
                 heroTarget.value = '';
-                heroSeason.value = state.currentSeason !== '__all' ? state.currentSeason : 'Season 34';
+                // Don't reset season, keep current
+                if (state.currentSeason !== '__all' && getAllSeasons().includes(state.currentSeason)) {
+                    heroSeason.value = state.currentSeason;
+                } else if (getAllSeasons().length > 0) {
+                    heroSeason.value = getAllSeasons()[0];
+                } else {
+                    heroSeason.value = '';
+                }
                 heroNotes.value = '';
                 heroName.focus();
             }
@@ -2427,6 +2555,7 @@
 
                 const loaded = loadState();
                 if (!loaded) { state.heroes = [];
+                    state.seasons = [];
                     state.currentSeason = '__all';
                     saveState(); }
                 renderAll();
@@ -2445,16 +2574,20 @@
                         .length + 34));
                     if (newSeason && newSeason.trim()) {
                         const s = newSeason.trim();
-                        // Check if exists
-                        const existing = getAllSeasons();
-                        if (existing.includes(s)) {
+                        if (getAllSeasons().includes(s)) {
                             showToast(`Season "${s}" already exists.`, true);
                             return;
                         }
+                        state.seasons.push(s);
+                        state.seasons.sort();
                         state.currentSeason = s;
                         saveState();
                         renderAll();
                         showToast(`Season "${s}" created! Add heroes to this season.`);
+                        // Set the hero season dropdown to the new season
+                        setTimeout(() => {
+                            heroSeason.value = s;
+                        }, 50);
                     }
                 });
 
@@ -2469,8 +2602,11 @@
                     const matches = parseInt(heroMatches.value, 10);
                     const winrate = parseFloat(heroWinrate.value);
                     const target = heroTarget.value.trim() !== '' ? parseFloat(heroTarget.value) : null;
-                    const season = heroSeason.value.trim() || (state.currentSeason !== '__all' ? state
-                        .currentSeason : 'Season 34');
+                    const season = heroSeason.value;
+                    if (!season || season === '__new__' || season === '') {
+                        showToast('Please select a valid season.', true);
+                        return;
+                    }
                     const notes = heroNotes.value.trim();
                     const success = addOrUpdateHero(name, role, matches, winrate, target, season, notes);
                     if (success) clearHeroForm();
@@ -2478,8 +2614,6 @@
                 setupEnterKey([heroName, heroRole, heroMatches, heroWinrate, heroTarget, heroSeason, heroNotes], () =>
                     heroAddBtn.click());
                 heroClearBtn.addEventListener('click', clearHeroForm);
-                // Set default season in form
-                heroSeason.value = state.currentSeason !== '__all' ? state.currentSeason : 'Season 34';
 
                 searchHero.addEventListener('input', renderHeroes);
                 sortHero.addEventListener('change', renderHeroes);
@@ -2515,8 +2649,11 @@
                     const winrate = parseFloat(editWinrate.value);
                     const target = editTarget.value.trim() !== '' ? parseFloat(editTarget.value) : null;
                     const role = editRole.value;
-                    const season = editSeason.value.trim() || (state.currentSeason !== '__all' ? state
-                        .currentSeason : 'Season 34');
+                    const season = editSeason.value;
+                    if (!season || season === '__new__' || season === '') {
+                        showToast('Please select a valid season.', true);
+                        return;
+                    }
                     const notes = editNotes.value.trim();
                     if (!id) { showToast('No hero selected.', true); return; }
                     if (updateHeroById(id, matches, winrate, target, role, season, notes)) closeEditModal();
